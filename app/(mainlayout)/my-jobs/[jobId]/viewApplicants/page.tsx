@@ -21,6 +21,18 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Require_User } from "@/app/utils/requireUser";
 
+// Define the type for applicant based on your Prisma schema
+type Applicant = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  about: string;
+  almaMatter: string;
+  contact: string;
+  email: string;
+  resume: string;
+};
+
 type Params = Promise<{ jobId: string }>;
 
 export default async function ViewApplicants({ params }: { params: Params }) {
@@ -76,7 +88,7 @@ export default async function ViewApplicants({ params }: { params: Params }) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {findapplicant.map((applicant) => (
+                {findapplicant.map((applicant: Applicant) => (
                   <TableRow key={applicant.id}>
                     <TableCell>{applicant.firstName}</TableCell>
                     <TableCell>{applicant.lastName}</TableCell>
