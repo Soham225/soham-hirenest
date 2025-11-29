@@ -29,7 +29,19 @@ import { MoreHorizontal, PenBoxIcon, Users, XCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-async function GetJobs(userId: string) {
+// Define the type for job listing
+type JobListing = {
+  id: string;
+  jobTitle: string;
+  status: string;
+  createdAt: Date;
+  Company: {
+    name: string;
+    logo: string;
+  };
+};
+
+async function GetJobs(userId: string): Promise<JobListing[]> {
   const data = await prisma.jobPost.findMany({
     where: {
       status: "ACTIVE",
@@ -90,7 +102,7 @@ export default async function MyJobsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.map((listing) => (
+                {data.map((listing: JobListing) => (
                   <TableRow key={listing.id}>
                     <TableCell>
                       <Image
