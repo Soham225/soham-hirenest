@@ -9,6 +9,7 @@ async function GetFavorites(userId: string) {
       UserId: userId,
     },
     select: {
+      id: true, // include SavedJobPost id
       JobPost: {
         select: {
           id: true,
@@ -37,9 +38,9 @@ async function GetFavorites(userId: string) {
 
 export default async function FavoritesPage() {
   const session = await Require_User();
-  const data = await GetFavorites(session.id as string);
+  const favorites = await GetFavorites(session.id as string);
 
-  if (data.length === 0) {
+  if (favorites.length === 0) {
     return (
       <EmptyState
         title="No Favorites Found"
@@ -52,8 +53,8 @@ export default async function FavoritesPage() {
 
   return (
     <div className="grid grid-cols-1 mt-5 gap-4">
-      {data.map((favorite) => (
-        <JobCard key={favorite.JobPost.id} job={favorite.JobPost} />
+      {favorites.map((fav) => (
+        <JobCard key={fav.JobPost.id} job={fav.JobPost} />
       ))}
     </div>
   );
