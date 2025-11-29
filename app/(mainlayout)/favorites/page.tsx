@@ -3,13 +3,32 @@ import { Require_User } from "@/app/utils/requireUser";
 import { EmptyState } from "@/components/general/EmptyState";
 import { JobCard } from "@/components/general/JobCard";
 
-async function GetFavorites(userId: string) {
+// Define the type based on your ACTUAL schema (required fields)
+type FavoriteItem = {
+  JobPost: {
+    id: string;
+    jobTitle: string;
+    salaryFrom: number; // Required in schema
+    salaryTo: number; // Required in schema
+    benefits: string[]; // Array in schema
+    employmentType: string; // Required in schema
+    location: string; // Required in schema
+    createdAt: Date;
+    Company: {
+      name: string; // Required in schema
+      location: string; // Required in schema
+      logo: string; // Required in schema
+      about: string; // Required in schema
+    };
+  };
+};
+
+async function GetFavorites(userId: string): Promise<FavoriteItem[]> {
   const data = await prisma.savedJobPost.findMany({
     where: {
       UserId: userId,
     },
     select: {
-      id: true, // include SavedJobPost id
       JobPost: {
         select: {
           id: true,
@@ -38,9 +57,9 @@ async function GetFavorites(userId: string) {
 
 export default async function FavoritesPage() {
   const session = await Require_User();
-  const favorites = await GetFavorites(session.id as string);
+  const data = await GetFavorites(session.id as string);
 
-  if (favorites.length === 0) {
+  if (data.length === 0) {
     return (
       <EmptyState
         title="No Favorites Found"
@@ -53,8 +72,8 @@ export default async function FavoritesPage() {
 
   return (
     <div className="grid grid-cols-1 mt-5 gap-4">
-      {favorites.map((fav) => (
-        <JobCard key={fav.JobPost.id} job={fav.JobPost} />
+      {data.map((favorite: FavoriteItem) => (
+        <JobCard key={favorite.JobPost.id} job={favorite.JobPost} />
       ))}
     </div>
   );
