@@ -52,8 +52,8 @@ export default async function FavoritesPage() {
 
   return (
     <div className="grid grid-cols-1 mt-5 gap-4">
-      {data.map((favorite: any) => (
-        <JobCard key={favorite.JobPost.id as string} job={favorite.JobPost} />
+      {data.map((favorite: { JobPost: any }) => (
+        <JobCard key={favorite.JobPost.id} job={favorite.JobPost} />
       ))}
     </div>
   );
