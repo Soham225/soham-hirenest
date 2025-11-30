@@ -199,7 +199,7 @@ export async function createJob(data: z.infer<typeof JobPostSchema>) {
   await inngest.send({
     name: "job-created",
     data: {
-      jobId: user.id,
+      jobId: jobpost.id,
       expirationDays: validateData.listingDuration,
     },
   });
