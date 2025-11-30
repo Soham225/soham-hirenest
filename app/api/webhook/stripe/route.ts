@@ -3,11 +3,16 @@ import { stripe } from "@/app/utils/stripe";
 import { headers } from "next/headers";
 import Stripe from "stripe";
 
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 export async function POST(req: Request) {
   const body = await req.text();
 
   const headersList = await headers();
-
   const signature = headersList.get("Stripe-Signature");
 
   let event: Stripe.Event;
@@ -18,7 +23,7 @@ export async function POST(req: Request) {
       signature as string,
       process.env.STRIPE_WEBHOOK_SECRET as string
     );
-  } catch {
+  } catch (err) {
     return new Response("webhook error", { status: 400 });
   }
 
@@ -37,11 +42,7 @@ export async function POST(req: Request) {
         stripeCustomerId: customerId as string,
       },
       select: {
-        Company: {
-          select: {
-            id: true,
-          },
-        },
+        Company: { select: { id: true } },
       },
     });
 
@@ -54,10 +55,9 @@ export async function POST(req: Request) {
         id: jobId,
         companyId: company?.Company?.id as string,
       },
-      data: {
-        status: "ACTIVE",
-      },
+      data: { status: "ACTIVE" },
     });
   }
+
   return new Response(null, { status: 200 });
 }
