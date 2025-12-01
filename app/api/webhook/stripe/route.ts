@@ -30,10 +30,6 @@ export async function POST(req: Request) {
     if (!jobId) {
       return new Response("No job id found", { status: 400 });
     }
-    console.log("Stripe webhook received:", event.type);
-    console.log("Session metadata:", session.metadata);
-    console.log("Customer ID:", session.customer);
-
     const company = await prisma.user.findUnique({
       where: {
         stripeCustomerId: customerId as string,
